@@ -1,0 +1,75 @@
+CREATE DATABASE MOVIE_DB;
+
+CREATE SCHEMA MOVIE_DB;
+
+CREATE TABLE MOVIE_DB.production_company(
+    name VARCHAR(100) UNIQUE PRIMARY KEY,
+    address VARCHAR(40)
+);
+
+CREATE TABLE MOVIE_DB.movie(
+    title VARCHAR(100) NOT NULL ,
+    year INT NOT NULL ,
+    UNIQUE (title, year),
+    length INT,
+    production_company VARCHAR(100),
+    plot_outline VARCHAR(400),
+    PRIMARY KEY (title, year),
+    FOREIGN KEY (production_company) REFERENCES MOVIE_DB.production_company(name)
+);
+
+CREATE TABLE MOVIE_DB.actor(
+    actor_name VARCHAR(40) NOT NULL ,
+    actor_birth INT NOT NULL ,
+    UNIQUE (actor_name, actor_birth),
+    PRIMARY KEY (actor_name, actor_birth)
+);
+
+CREATE TABLE MOVIE_DB.director(
+    director_name VARCHAR(40) NOT NULL ,
+    director_birth INT NOT NULL ,
+    UNIQUE (director_name, director_birth),
+    PRIMARY KEY (director_name, director_birth)
+);
+
+
+CREATE TABLE MOVIE_DB.genres(
+    title VARCHAR(40),
+    year INT,
+    genre VARCHAR(40),
+    PRIMARY KEY (title, genre, year),
+    FOREIGN KEY (title, year) REFERENCES MOVIE_DB.movie(title, year)
+);
+
+CREATE TABLE MOVIE_DB.quotes(
+    title VARCHAR(40),
+    year INT,
+    actor VARCHAR(40),
+    actor_birth INT,
+    quote VARCHAR(100),
+    PRIMARY KEY (title, year, actor, actor_birth),
+    FOREIGN KEY (title, year) REFERENCES MOVIE_DB.movie(title, year),
+    FOREIGN KEY (actor, actor_birth) REFERENCES MOVIE_DB.actor(actor_name, actor_birth)
+);
+
+CREATE TABLE MOVIE_DB.actor_cast(
+    title VARCHAR(40),
+    year INT,
+    actor VARCHAR(40),
+    actor_birth INT,
+    role VARCHAR(40),
+    PRIMARY KEY (title, year, actor, actor_birth),
+    FOREIGN KEY (title, year) REFERENCES MOVIE_DB.movie(title, year),
+    FOREIGN KEY (actor, actor_birth) REFERENCES MOVIE_DB.actor(actor_name, actor_birth)
+);
+
+CREATE TABLE MOVIE_DB.director_cast(
+    title VARCHAR(40),
+    year INT,
+    director VARCHAR(40),
+    director_birth INT,
+    PRIMARY KEY (title, year, director, director_birth),
+    FOREIGN KEY (title, year) REFERENCES MOVIE_DB.movie(title, year),
+    FOREIGN KEY (director, director_birth) REFERENCES MOVIE_DB.director(director_name, director_birth)
+);
+
