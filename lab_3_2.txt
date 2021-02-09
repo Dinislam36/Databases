@@ -1,0 +1,12 @@
+CREATE VIEW OldFilmInventory AS
+    SELECT inventory_id FROM inventory
+    JOIN film f on f.film_id = inventory.film_id
+    WHERE release_year <= 2010;
+
+CREATE VIEW StaffMails AS
+    SELECT first_name, last_name, email FROM staff;
+
+
+CREATE TRIGGER last_update
+    BEFORE INSERT ON film
+    FOR EACH ROW SET film.release_year = 2021;

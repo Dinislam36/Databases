@@ -1,0 +1,36 @@
+﻿SELECT * FROM countries ORDER BY id LIMIT 5 OFFSET 12;
+
+
+σ(cointries)
+
+
+SELECT address FROM city WHERE city.name SIMILAR TO 'A%';
+
+
+Π address (σaddress~’A*’ (city))
+
+
+SELECT first_name, last_name, city FROM customers;
+
+
+Π first_name, last_name, city (customers)
+
+
+SELECT
+DISTINCT ON (C.id) C.first_name, C.last_name, C.id
+FROM customers C
+JOIN transations T ON C.id == T.customer_id
+WHERE T.payment >= 11;
+
+
+Π first_name, last_name, id (σ payment >=11 (customers ⋈ customers.id = transacton.customer_id transactions))
+
+
+
+
+SELECT DISTINCT first_name
+FROM customers C1
+JOIN customers C2 ON C1.first_name == C2.first_name AND C1.id != C2.id;
+
+
+Π first_name (customers C1 ⋈ C1.first_name = C2.first_name, C1.id != C2.id customers C2)
