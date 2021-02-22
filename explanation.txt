@@ -1,0 +1,15 @@
+--Explain ANALYZE SELECT * FROM public.customers_1 WHERE age > 20 and age < 60
+--Explain ANALYZE SELECT * FROM public.customers_1 WHERE age = 40 or age = 20
+--Explain ANALYZE SELECT * FROM public.customers_2 WHERE age > 20 and age < 60
+--Explain ANALYZE SELECT * FROM public.customers_2 WHERE age = 40 or age = 20
+
+
+
+Explanation: customers_1 have btree, customers_2 have hash, total 1mil rows
+We have following timings: 
+btree inequality - 315ms
+btree equality - 170ms
+hash inequality - 370ms
+hash equality - 140ms
+
+So, we have more efficency in inequality using btree and more efficency in comparasion using hash
