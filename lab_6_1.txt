@@ -1,0 +1,52 @@
+--Query for task 1
+
+SELECT DISTINCT film.title, film.release_year, category.name
+FROM film
+JOIN film_category ON film.film_id = film_category.film_id
+JOIN category ON film_category.category_id = category.category_id
+WHERE film.film_id NOT IN
+   (SELECT DISTINCT film_id FROM RENTAL JOIN INVENTORY
+   ON rental.inventory_id = inventory.inventory_id)
+   AND
+   (film.rating = 'R' OR film.rating = 'PG-13') 
+	AND 
+   (category.name = 'Horror' OR category.name = 'Sci-Fi')
+
+
+
+
+OUTPUT
+
+"Commandments Express"	2006	"Horror"
+"Crowds Telemark"	2006	"Sci-Fi"
+"Treasure Command"	2006	"Horror"
+
+
+
+
+
+EXPLAIN QUTPUT
+As we can see the most cost part is Sort, so we can improve it by making tree index 
+
+"Unique  (cost=627.85..628.14 rows=23 width=89)"
+"  ->  Sort  (cost=627.85..627.91 rows=23 width=89)"
+"        Sort Key: film.title, film.release_year, film.length, category.name"
+"        ->  Hash Join  (cost=554.90..627.33 rows=23 width=89)"
+"              Hash Cond: (film.film_id = film_category.film_id)"
+"              ->  Seq Scan on film  (cost=532.76..604.26 rows=187 width=25)"
+"                    Filter: ((NOT (hashed SubPlan 1)) AND ((rating = 'R'::mpaa_rating) OR (rating = 'PG-13'::mpaa_rating)))"
+"                    SubPlan 1"
+"                      ->  HashAggregate  (cost=520.78..530.36 rows=958 width=2)"
+"                            Group Key: inventory.film_id"
+"                            ->  Hash Join  (cost=128.07..480.67 rows=16044 width=2)"
+"                                  Hash Cond: (rental.inventory_id = inventory.inventory_id)"
+"                                  ->  Seq Scan on rental  (cost=0.00..310.44 rows=16044 width=4)"
+"                                  ->  Hash  (cost=70.81..70.81 rows=4581 width=6)"
+"                                        ->  Seq Scan on inventory  (cost=0.00..70.81 rows=4581 width=6)"
+"              ->  Hash  (cost=20.58..20.58 rows=125 width=70)"
+"                    ->  Hash Join  (cost=1.26..20.58 rows=125 width=70)"
+"                          Hash Cond: (film_category.category_id = category.category_id)"
+"                          ->  Seq Scan on film_category  (cost=0.00..16.00 rows=1000 width=4)"
+"                          ->  Hash  (cost=1.24..1.24 rows=2 width=72)"
+"                                ->  Seq Scan on category  (cost=0.00..1.24 rows=2 width=72)"
+"                                      Filter: (((name)::text = 'Horror'::text) OR ((name)::text = 'Sci-Fi'::text))"
